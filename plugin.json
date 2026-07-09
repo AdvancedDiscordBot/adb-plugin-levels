@@ -12,6 +12,7 @@
     "commands.register",
     "events.register"
   ],
+  "discordPermissions": ["ManageRoles", "SendMessages"],
   "configSchema": {
     "type": "object",
     "properties": {
