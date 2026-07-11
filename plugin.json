@@ -3,7 +3,7 @@
   "displayName": "Levels & XP System",
   "version": "1.0.0",
   "description": "Track user activity with XP, levels, and role rewards",
-  "author": "dead",
+  "author": "DeadIndian",
   "main": "index.js",
   "requiresRestart": false,
   "permissions": [
@@ -12,7 +12,10 @@
     "commands.register",
     "events.register"
   ],
-  "discordPermissions": ["ManageRoles", "SendMessages"],
+  "discordPermissions": [
+    "ManageRoles",
+    "SendMessages"
+  ],
   "configSchema": {
     "type": "object",
     "properties": {
