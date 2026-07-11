@@ -1,12 +1,32 @@
 {
   "name": "adb-plugin-levels",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Levels & XP System plugin for AdvancedDiscordBot",
   "main": "index.js",
-  "dependencies": {
-    "discord.js": "^14.14.1",
-    "mongoose": "^8.0.3"
+  "files": [
+    "index.js",
+    "plugin.json",
+    "commands",
+    "models",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/local-harness.js"
   },
+  "keywords": [
+    "adb-plugin",
+    "discord",
+    "levels"
+  ],
   "author": "DeadIndian",
-  "license": "AGPL-3.0-only"
+  "license": "AGPL-3.0-only",
+  "peerDependencies": {
+    "discord.js": ">=14.0.0",
+    "mongoose": ">=7.0.0"
+  },
+  "devDependencies": {
+    "discord.js": "^14.14.1",
+    "mongoose": "^8.0.0"
+  }
 }
