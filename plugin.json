@@ -1,46 +1,44 @@
 {
-  "name": "adb-plugin-levels",
-  "displayName": "Levels & XP System",
-  "version": "1.0.0",
-  "description": "Track user activity with XP, levels, and role rewards",
-  "author": "DeadIndian",
-  "main": "index.js",
-  "requiresRestart": false,
-  "permissions": [
-    "db.read",
-    "db.write",
-    "commands.register",
-    "events.register"
-  ],
-  "discordPermissions": [
-    "ManageRoles",
-    "SendMessages"
-  ],
-  "configSchema": {
-    "type": "object",
-    "properties": {
-      "xpPerMessage": {
-        "type": "number",
-        "default": 5,
-        "minimum": 1,
-        "maximum": 50
-      },
-      "xpCooldown": {
-        "type": "number",
-        "default": 60,
-        "minimum": 10,
-        "maximum": 300
-      },
-      "xpPerMinuteLimit": {
-        "type": "number",
-        "default": 100,
-        "minimum": 10,
-        "maximum": 1000
-      },
-      "levelUpChannelId": {
-        "type": "string",
-        "default": null
-      }
-    }
-  }
+	"name": "adb-plugin-levels",
+	"displayName": "Levels & XP System",
+	"version": "1.1.0",
+	"description": "Track user activity with XP, levels, and role rewards.",
+	"author": "DeadIndian",
+	"main": "index.js",
+	"requiresRestart": true,
+	"isolation": false,
+	"manifestVersion": 2,
+	"process": {
+		"model": "persistent",
+		"maxExecutionMs": 10000,
+		"memoryMb": 256,
+		"persistentReason": "Runs un-isolated (system:raw-client) to award XP on every message, grant role rewards (member.roles.add), and announce level-ups in a live channel — role mutation and message-object access the sandboxed RPC surface does not provide."
+	},
+	"capabilities": {
+		"system": ["raw-client"],
+		"storage": ["own-collection"],
+		"discord": ["ManageRoles", "SendMessages"],
+		"hooks": ["emit"]
+	},
+	"permissions": {
+		"system": ["raw-client"],
+		"storage": ["own-collection"],
+		"discord": ["ManageRoles", "SendMessages"],
+		"hooks": ["emit"],
+		"network": { "outbound": [] },
+		"filesystem": { "read": [], "write": [] },
+		"childProcess": false,
+		"nativeAddons": false
+	},
+	"declaredDependencies": [],
+	"discordPermissions": ["ManageRoles", "SendMessages"],
+	"configSchema": {
+		"type": "object",
+		"properties": {
+			"xpPerMessage": { "type": "number", "default": 5, "minimum": 1, "maximum": 50 },
+			"xpCooldown": { "type": "number", "default": 60, "minimum": 10, "maximum": 300 },
+			"xpPerMinuteLimit": { "type": "number", "default": 100, "minimum": 10, "maximum": 1000 },
+			"levelUpChannelId": { "type": "string", "default": null }
+		}
+	}
 }
