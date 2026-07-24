@@ -1,8 +1,21 @@
 {
 	"name": "adb-plugin-levels",
 	"displayName": "Levels & XP System",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Track user activity with XP, levels, and role rewards.",
+	"engines": {
+		"core": ">=2.0.0",
+		"plugins": { "administration": ">=2.0.0" }
+	},
+	"settings": {
+		"commandPermissions": true,
+		"schema": [
+			{ "key": "xpPerMessage", "type": "number", "label": "XP per message", "default": 5 },
+			{ "key": "xpCooldown", "type": "number", "label": "XP cooldown (seconds)", "default": 60 },
+			{ "key": "xpPerMinuteLimit", "type": "number", "label": "XP per minute limit", "default": 100 },
+			{ "key": "levelUpChannelId", "type": "channel", "label": "Level-up announcement channel" }
+		]
+	},
 	"author": "DeadIndian",
 	"main": "index.js",
 	"requiresRestart": true,
