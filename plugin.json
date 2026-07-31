@@ -1,7 +1,7 @@
 {
 	"name": "adb-plugin-levels",
 	"displayName": "Levels & XP System",
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"description": "Track user activity with XP, levels, and role rewards.",
 	"engines": {
 		"core": ">=2.0.0",
@@ -45,6 +45,23 @@
 	},
 	"declaredDependencies": [],
 	"discordPermissions": ["ManageRoles", "SendMessages"],
+	"webUi": {
+		"memberPages": [
+			{
+				"path": "/me/rank",
+				"label": "My Rank",
+				"icon": "Star",
+				"source": { "model": "Level", "scope": "member", "limit": 1 },
+				"view": {
+					"type": "stat",
+					"stats": [
+						{ "field": "level", "label": "Level" },
+						{ "field": "xp", "label": "Total XP" }
+					]
+				}
+			}
+		]
+	},
 	"configSchema": {
 		"type": "object",
 		"properties": {
