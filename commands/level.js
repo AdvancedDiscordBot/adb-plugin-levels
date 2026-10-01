@@ -11,6 +11,7 @@ module.exports = function createLevelCommand(Level) {
         .setRequired(false));
 
   async function execute(interaction) {
+    await interaction.deferReply();
     try {
       const targetUser = interaction.options.getUser('user') || interaction.user;
       const guildId = interaction.guild.id;
@@ -19,7 +20,8 @@ module.exports = function createLevelCommand(Level) {
       const levelData = await Level.findOne({ guildId, userId });
 
       if (!levelData) {
-        await interaction.reply({
+			await interaction.deleteReply();
+			await interaction.followUp({
           content: `${targetUser} has not earned any XP yet.`,
           ephemeral: true
         });
@@ -44,10 +46,11 @@ module.exports = function createLevelCommand(Level) {
         .setColor(0x0099ff)
         .setTimestamp();
 
-      await interaction.reply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error(error);
-      await interaction.reply({
+		await interaction.deleteReply();
+		await interaction.followUp({
         content: 'There was an error while fetching the level!',
         ephemeral: true
       });

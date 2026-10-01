@@ -34,6 +34,7 @@ module.exports = function createLevelRolesCommand(LevelRole) {
         .setDescription('List all role rewards for this server'));
 
   async function execute(interaction) {
+    await interaction.deferReply({ ephemeral: true });
     try {
       const guildId = interaction.guild.id;
       const subcommand = interaction.options.getSubcommand();
@@ -48,7 +49,7 @@ module.exports = function createLevelRolesCommand(LevelRole) {
           { upsert: true, new: true }
         );
 
-        await interaction.reply({
+        await interaction.editReply({
           content: `Successfully set ${role} as reward for reaching level ${level}!`,
           ephemeral: true
         });
@@ -58,7 +59,7 @@ module.exports = function createLevelRolesCommand(LevelRole) {
 
         await LevelRole.deleteOne({ guildId, level });
 
-        await interaction.reply({
+        await interaction.editReply({
           content: `Successfully removed role reward for level ${level}!`,
           ephemeral: true
         });
@@ -67,7 +68,7 @@ module.exports = function createLevelRolesCommand(LevelRole) {
         const roles = await LevelRole.find({ guildId }).sort({ level: 1 });
 
         if (roles.length === 0) {
-          await interaction.reply({
+          await interaction.editReply({
             content: 'No role rewards configured for this server.',
             ephemeral: true
           });
@@ -84,11 +85,11 @@ module.exports = function createLevelRolesCommand(LevelRole) {
         }).join('\n');
 
         embed.setDescription(description);
-        await interaction.reply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed] });
       }
     } catch (error) {
       console.error(error);
-      await interaction.reply({
+      await interaction.editReply({
         content: 'There was an error while managing level roles!',
         ephemeral: true
       });

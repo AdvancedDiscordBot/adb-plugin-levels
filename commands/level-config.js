@@ -1,7 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 
-// Factory: the LevelConfig model is injected by index.js (namespaced via ctx.defineModel).
-module.exports = function createLevelConfigCommand(LevelConfig) {
+// Share dashboard storage; getConfig also reads existing LevelConfig records.
+module.exports = function createLevelConfigCommand(db, getConfig) {
+	const pending = new Map();
   const data = new SlashCommandBuilder()
     .setName('level-config')
     .setDescription('Configure the levels/XP system')
@@ -27,6 +28,7 @@ module.exports = function createLevelConfigCommand(LevelConfig) {
         .addChannelTypes(0)); // GUILD_TEXT
 
   async function execute(interaction) {
+    await interaction.deferReply({ ephemeral: true });
     try {
       const guildId = interaction.guild.id;
       const updates = {};
@@ -45,19 +47,25 @@ module.exports = function createLevelConfigCommand(LevelConfig) {
       }
 
       if (Object.keys(updates).length === 0) {
-        await interaction.reply({
+        await interaction.editReply({
           content: 'No settings provided. Pass at least one option to update.',
           ephemeral: true
         });
         return;
       }
 
-      // Persist to this plugin's own config collection.
-      await LevelConfig.findOneAndUpdate(
-        { guildId },
-        { $set: { guildId, ...updates } },
-        { upsert: true, new: true }
-      );
+		// The host replaces all config data, so serialize each read/merge/write.
+		const task = (pending.get(guildId) || Promise.resolve()).catch(() => {}).then(async () => {
+			await db.updatePluginConfig(guildId, "adb-plugin-levels", {
+				...await getConfig(guildId), ...updates,
+			});
+		});
+		pending.set(guildId, task);
+		try {
+			await task;
+		} finally {
+			if (pending.get(guildId) === task) pending.delete(guildId);
+		}
 
       const embed = new EmbedBuilder()
         .setTitle('Levels Configuration Updated')
@@ -78,10 +86,10 @@ module.exports = function createLevelConfigCommand(LevelConfig) {
         embed.addFields({ name: 'Level-Up Channel', value: `${channel || updates.levelUpChannelId}` });
       }
 
-      await interaction.reply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error(error);
-      await interaction.reply({
+      await interaction.editReply({
         content: 'There was an error while updating the configuration!',
         ephemeral: true
       });

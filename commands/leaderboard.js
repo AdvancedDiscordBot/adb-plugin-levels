@@ -7,6 +7,7 @@ module.exports = function createLeaderboardCommand(Level) {
     .setDescription('View the server XP leaderboard');
 
   async function execute(interaction) {
+    await interaction.deferReply();
     try {
       const guildId = interaction.guild.id;
 
@@ -15,7 +16,8 @@ module.exports = function createLeaderboardCommand(Level) {
         .limit(10);
 
       if (leaderboard.length === 0) {
-        await interaction.reply({
+			await interaction.deleteReply();
+			await interaction.followUp({
           content: 'No one has earned XP yet!',
           ephemeral: true
         });
@@ -35,10 +37,11 @@ module.exports = function createLeaderboardCommand(Level) {
       }).join('\n');
 
       embed.setDescription(description);
-      await interaction.reply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error(error);
-      await interaction.reply({
+		await interaction.deleteReply();
+		await interaction.followUp({
         content: 'There was an error while fetching the leaderboard!',
         ephemeral: true
       });
