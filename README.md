@@ -31,6 +31,12 @@ A plugin for AdvancedDiscordBot that adds experience points, levels, and role re
 - `xpPerMinuteLimit`: Maximum XP a user can earn per minute (default: 100)
 - `levelUpChannelId`: Channel ID for level-up announcements (optional)
 
+The dashboard and `/level-config` use the same plugin-config store. Existing
+`LevelConfig` records remain fallbacks for settings not yet stored there.
+XP is capped over a rolling 60-second window; the final award may be smaller than
+`xpPerMessage`. Cooldown and window state are process-local and expire lazily, so
+one process must handle a guild's messages. Restarting clears that rate-limit state.
+
 ## How It Works
 
 XP is awarded based on message activity with anti-spam protection. Levels are calculated using the formula: `level = floor(sqrt(xp / 100))`.
@@ -39,7 +45,7 @@ When a user levels up:
 - Their level is updated in the database
 - A level-up event is emitted for other plugins to listen to
 - A message is sent in the configured level-up channel (if set)
-- Any role rewards for the new level are automatically assigned
+- Missing role rewards at or below the new level are automatically assigned
 
 ## Database Models
 
